@@ -12,6 +12,7 @@ const is = require('is2');
 // Global Values
 const TIMEOUT = 2000;
 const RETRY_TIME = 250;
+const LOCALHOST = '127.0.0.1';
 
 function getDeferred() {
   let resolve;
@@ -71,21 +72,13 @@ function check(port, host) {
   const deferred = getDeferred();
   let inUse = true;
   let client;
-
-  let opts;
-  if (!is.obj(port)) {
-    opts = makeOptionsObj(port, host);
-  } else {
-    opts = port;
-  }
+  const opts = Object.assign({
+    host: LOCALHOST,
+  }, is.obj(port) ? port : makeOptionsObj(port, host));
 
   if (!is.port(opts.port)) {
     deferred.reject(new Error(`invalid port: ${util.inspect(opts.port)}`));
     return deferred.promise;
-  }
-
-  if (is.nullOrUndefined(opts.host)) {
-    opts.host = '127.0.0.1';
   }
 
   function cleanUp() {
@@ -150,7 +143,7 @@ function check(port, host) {
 function waitForStatus(port, host, inUse, retryTimeMs, timeOutMs) {
   const deferred = getDeferred();
   let timeoutId;
-  let timedout = false;
+  let timedOut = false;
   let retryId;
 
   // the first argument may be an object, if it is not, make an object
@@ -184,7 +177,7 @@ function waitForStatus(port, host, inUse, retryTimeMs, timeOutMs) {
   }
 
   function timeoutFunc() {
-    timedout = true;
+    timedOut = true;
     cleanUp();
     deferred.reject(new Error('timeout'));
   }
@@ -194,7 +187,7 @@ function waitForStatus(port, host, inUse, retryTimeMs, timeOutMs) {
   function doCheck() {
     check(opts.port, opts.host)
       .then((used) => {
-        if (timedout) {
+        if (timedOut) {
           return;
         }
         if (used === opts.inUse) {
@@ -206,7 +199,7 @@ function waitForStatus(port, host, inUse, retryTimeMs, timeOutMs) {
           }, opts.retryTimeMs);
         }
       }, (err) => {
-        if (timedout) {
+        if (timedOut) {
           return;
         }
         deferred.reject(err);
@@ -275,11 +268,12 @@ function waitUntilFree(port, retryTimeMs, timeOutMs) {
   // the first argument may be an object, if it is not, make an object
   let opts;
   if (is.obj(port)) {
-    opts = port;
-    opts.host = '127.0.0.1';
-    opts.inUse = false;
+    opts = Object.assign({}, port, {
+      host: LOCALHOST,
+      inUse: false,
+    });
   } else {
-    opts = makeOptionsObj(port, '127.0.0.1', false, retryTimeMs, timeOutMs);
+    opts = makeOptionsObj(port, LOCALHOST, false, retryTimeMs, timeOutMs);
   }
 
   return waitForStatus(opts);
@@ -331,9 +325,9 @@ function waitUntilUsedOnHost(port, host, retryTimeMs, timeOutMs) {
  *
  * var tcpPortUsed = require('tcp-port-used');
  * tcpPortUsed.waitUntilUsed(44204, 500, 4000)
- * .then(function() {
+ * .then(() => {
  *     console.log('Port 44204 is now in use.');
- * }, function(err) {
+ * }, (error) => {
  *     console.log('Error: ', error.message);
  * });
  */
@@ -342,11 +336,11 @@ function waitUntilUsed(port, retryTimeMs, timeOutMs) {
   let opts;
   if (is.obj(port)) {
     opts = Object.assign({}, port, {
-      host: '127.0.0.1',
+      host: LOCALHOST,
       inUse: true,
     });
   } else {
-    opts = makeOptionsObj(port, '127.0.0.1', true, retryTimeMs, timeOutMs);
+    opts = makeOptionsObj(port, LOCALHOST, true, retryTimeMs, timeOutMs);
   }
 
   return waitUntilUsedOnHost(opts);
