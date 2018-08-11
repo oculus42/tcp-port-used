@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "cover": "./node_modules/.bin/nyc --reporter=html --reporter=lcov npm test",
-        "test": "./node_modules/.bin/mocha --reporter=list ./test.js"
+        "test": "./node_modules/.bin/mocha --reporter=list ./test/test.js"
     },
     "repository": {
         "type": "git",
