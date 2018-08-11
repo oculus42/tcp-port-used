@@ -1,6 +1,8 @@
 port-used
 =============
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/oculus42/port-used.svg)](https://greenkeeper.io/)
+
 A simple Node.js module to check if a TCP port is currently in use. It returns a
 deferred promise from the q library.
 
