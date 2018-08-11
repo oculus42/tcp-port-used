@@ -1,6 +1,6 @@
 {
-    "name": "tcp-port-used",
-    "version": "0.1.2",
+    "name": "port-used",
+    "version": "1.0.0",
     "description": "A simple Node.js module to check if a TCP port is already bound.",
     "main": "index.js",
     "scripts": {
@@ -20,11 +20,14 @@
         "networking"
     ],
     "author": "Edmond Meinfelder",
+    "contributors": [
+      "Samuel Rouse"
+    ],
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/stdarg/tcp-port-used/issues"
+        "url": "https://github.com/oculus42/tcp-port-used/issues"
     },
-    "homepage": "https://github.com/stdarg/tcp-port-used",
+    "homepage": "https://github.com/oculus42/tcp-port-used",
     "dependencies": {
         "is2": "2.0.1"
     },
