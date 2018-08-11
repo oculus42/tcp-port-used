@@ -2,7 +2,6 @@
 var assert = require('assert');
 var tcpPortUsed = require('./index');
 var net = require('net');
-//var debug = require('debug')('tcp-port-used-test');
 
 var server;
 

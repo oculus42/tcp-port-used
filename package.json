@@ -1,14 +1,15 @@
 {
-    "name": "tcp-port-used",
-    "version": "0.1.2",
+    "name": "port-used",
+    "version": "1.0.0",
     "description": "A simple Node.js module to check if a TCP port is already bound.",
     "main": "index.js",
     "scripts": {
+        "cover": "npx nyc --reporter=html --reporter=lcov npm test",
         "test": "./node_modules/.bin/mocha --reporter=list ./test.js"
     },
     "repository": {
         "type": "git",
-        "url": "git://github.com/stdarg/tcp-port-used.git"
+        "url": "git://github.com/oculus42/port-used.git"
     },
     "keywords": [
         "tcp",
@@ -19,16 +20,24 @@
         "networking"
     ],
     "author": "Edmond Meinfelder",
+    "contributors": [
+      "Samuel Rouse"
+    ],
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/stdargtcp-port-used/issues"
+        "url": "https://github.com/oculus42/port-used/issues"
     },
-    "homepage": "https://github.com/stdarg/tcp-port-used",
+    "homepage": "https://github.com/oculus42/port-used",
     "dependencies": {
-        "debug": "3.1.0",
         "is2": "2.0.1"
     },
     "devDependencies": {
-        "mocha": "5.2.0"
+        "eslint": "^5.3.0",
+        "eslint-config-airbnb": "^17.0.0",
+        "eslint-plugin-import": "^2.13.0",
+        "eslint-plugin-jsx-a11y": "^6.1.1",
+        "eslint-plugin-react": "^7.10.0",
+        "mocha": "5.2.0",
+        "nyc": "^12.0.2"
     }
 }
