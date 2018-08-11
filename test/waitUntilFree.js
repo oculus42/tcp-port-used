@@ -66,7 +66,7 @@ describe('waitUntilFreeOnHost', function () {
     });
   });
 
-  it('should reject promise for used port number after timeout using an arg obj', (done) => {
+  it('should reject promise for used port number after timeout', (done) => {
     tcpPortUsed.waitUntilFreeOnHost({
       port: 44203, host: '127.0.0.1', retryTimeMs: 500, timeOutMs: 1000,
     })
@@ -81,20 +81,7 @@ describe('waitUntilFreeOnHost', function () {
       });
   });
 
-  it('should reject promise for used port number after timeout', (done) => {
-    tcpPortUsed.waitUntilFreeOnHost(44203, '127.0.0.1', 500, 1000)
-      .then(() => {
-        done(new Error('waitUntilFreeOnHost unexpectedly succeeded'));
-      }, (err) => {
-        if (err.message === 'timeout') {
-          done();
-        } else {
-          done(err);
-        }
-      });
-  });
-
-  it('should fufill promise for free port number using an arg object', (done) => {
+  it('should fufill promise for free port number', (done) => {
     tcpPortUsed.waitUntilFreeOnHost({
       port: 44205, host: '127.0.0.1', retryTimeMs: 500, timeOutM: 4000,
     })
@@ -105,17 +92,7 @@ describe('waitUntilFreeOnHost', function () {
       });
   });
 
-
-  it('should fufill promise for free port number', (done) => {
-    tcpPortUsed.waitUntilFreeOnHost(44205, '127.0.0.1', 500, 4000)
-      .then(() => {
-        done();
-      }, (err) => {
-        done(err);
-      });
-  });
-
-  it('should fufill promise for free port number and default retry and timeout using an arg obj', (done) => {
+  it('should fufill promise for free port number and default retry and timeout', (done) => {
     tcpPortUsed.waitUntilFreeOnHost({ port: 44205 })
       .then(() => {
         done();
@@ -124,31 +101,8 @@ describe('waitUntilFreeOnHost', function () {
       });
   });
 
-
-  it('should fufill promise for free port number and default retry and timeout', (done) => {
-    tcpPortUsed.waitUntilFreeOnHost(44205)
-      .then(() => {
-        done();
-      }, (err) => {
-        done(err);
-      });
-  });
-
-  it('should reject promise for invalid port number using an arg obj', (done) => {
-    tcpPortUsed.waitUntilFreeOnHost({})
-      .then(() => {
-        done(new Error('waitUntilFreeOnHost unexpectedly succeeded'));
-      }, (err) => {
-        if (err.message === 'invalid port: undefined') {
-          done();
-        } else {
-          done(err);
-        }
-      });
-  });
-
   it('should reject promise for invalid port number', (done) => {
-    tcpPortUsed.waitUntilFreeOnHost()
+    tcpPortUsed.waitUntilFreeOnHost({})
       .then(() => {
         done(new Error('waitUntilFreeOnHost unexpectedly succeeded'));
       }, (err) => {
@@ -176,7 +130,7 @@ describe('waitUntilFree', function () {
     });
   });
 
-  it('should reject promise for used port number after timeout using arg obj', (done) => {
+  it('should reject promise for used port number after timeout', (done) => {
     tcpPortUsed.waitUntilFree({ port: 44203, retryTimeMs: 500, timeOutMs: 4000 })
       .then(() => {
         done(new Error('waitUntilFree unexpectedly succeeded'));
@@ -189,20 +143,7 @@ describe('waitUntilFree', function () {
       });
   });
 
-  it('should reject promise for used port number after timeout', (done) => {
-    tcpPortUsed.waitUntilFree(44203, 500, 4000)
-      .then(() => {
-        done(new Error('waitUntilFree unexpectedly succeeded'));
-      }, (err) => {
-        if (err.message === 'timeout') {
-          done();
-        } else {
-          done(err);
-        }
-      });
-  });
-
-  it('should fufill promise for free port number using arg object', (done) => {
+  it('should fufill promise for free port number', (done) => {
     tcpPortUsed.waitUntilFree({ port: 44205, retryTimeMs: 500, timeOutMs: 4000 })
       .then(() => {
         done();
@@ -211,16 +152,7 @@ describe('waitUntilFree', function () {
       });
   });
 
-  it('should fufill promise for free port number', (done) => {
-    tcpPortUsed.waitUntilFree(44205, 500, 4000)
-      .then(() => {
-        done();
-      }, (err) => {
-        done(err);
-      });
-  });
-
-  it('should fufill promise for free port number and default retry and timeout using arg object', (done) => {
+  it('should fufill promise for free port number and default retry and timeout', (done) => {
     tcpPortUsed.waitUntilFree({ port: 44205 })
       .then(() => {
         done();
@@ -229,30 +161,8 @@ describe('waitUntilFree', function () {
       });
   });
 
-  it('should fufill promise for free port number and default retry and timeout', (done) => {
-    tcpPortUsed.waitUntilFree(44205)
-      .then(() => {
-        done();
-      }, (err) => {
-        done(err);
-      });
-  });
-
-  it('should reject promise for invalid port number using arg object', (done) => {
-    tcpPortUsed.waitUntilFree({})
-      .then(() => {
-        done(new Error('waitUntilFreeOnHost: unexpectedly succeeded'));
-      }, (err) => {
-        if (err.message === 'invalid port: undefined') {
-          done();
-        } else {
-          done(err);
-        }
-      });
-  });
-
   it('should reject promise for invalid port number', (done) => {
-    tcpPortUsed.waitUntilFree()
+    tcpPortUsed.waitUntilFree({})
       .then(() => {
         done(new Error('waitUntilFreeOnHost: unexpectedly succeeded'));
       }, (err) => {
