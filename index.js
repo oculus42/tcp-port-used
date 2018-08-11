@@ -40,13 +40,29 @@ function getDeferred() {
  * @return {Object} An options object with all the above parameters as properties.
  */
 function makeOptionsObj(port, host, inUse, retryTimeMs, timeOutMs) {
-  return {
-    port,
-    host,
-    inUse,
-    retryTimeMs,
-    timeOutMs,
-  };
+  // the first argument may be an object, if it is not, make an object
+  let opts;
+  if (is.obj(port)) {
+    opts = port;
+  } else {
+    opts = {
+      port,
+      host,
+      inUse,
+      retryTimeMs,
+      timeOutMs,
+    };
+  }
+
+  if (!is.positiveInt(opts.retryTimeMs)) {
+    opts.retryTimeMs = RETRY_TIME;
+  }
+
+  if (!is.positiveInt(opts.timeOutMs)) {
+    opts.timeOutMs = TIMEOUT;
+  }
+
+  return opts;
 }
 
 /**
@@ -74,7 +90,7 @@ function check(port, host) {
   let client;
   const opts = Object.assign({
     host: LOCALHOST,
-  }, is.obj(port) ? port : makeOptionsObj(port, host));
+  }, makeOptionsObj(port, host));
 
   if (!is.port(opts.port)) {
     deferred.reject(new Error(`invalid port: ${util.inspect(opts.port)}`));
@@ -140,31 +156,19 @@ function check(port, host) {
  *     console.log('Error: ', error.message);
  * });
  */
+
 function waitForStatus(port, host, inUse, retryTimeMs, timeOutMs) {
+  // the first argument may be an object, if it is not, make an object
+  const opts = makeOptionsObj(port, host, inUse, retryTimeMs, timeOutMs);
+
   const deferred = getDeferred();
   let timeoutId;
   let timedOut = false;
   let retryId;
 
-  // the first argument may be an object, if it is not, make an object
-  let opts;
-  if (is.obj(port)) {
-    opts = port;
-  } else {
-    opts = makeOptionsObj(port, host, inUse, retryTimeMs, timeOutMs);
-  }
-
   if (!is.bool(opts.inUse)) {
     deferred.reject(new Error('inUse must be a boolean'));
     return deferred.promise;
-  }
-
-  if (!is.positiveInt(opts.retryTimeMs)) {
-    opts.retryTimeMs = RETRY_TIME;
-  }
-
-  if (!is.positiveInt(opts.timeOutMs)) {
-    opts.timeOutMs = TIMEOUT;
   }
 
   function cleanUp() {
@@ -233,14 +237,11 @@ function waitForStatus(port, host, inUse, retryTimeMs, timeOutMs) {
  */
 function waitUntilFreeOnHost(port, host, retryTimeMs, timeOutMs) {
   // the first argument may be an object, if it is not, make an object
-  let opts;
-  if (is.obj(port)) {
-    opts = Object.assign({}, port, {
+  const opts = Object.assign({},
+    makeOptionsObj(port, host, false, retryTimeMs, timeOutMs),
+    {
       inUse: false,
     });
-  } else {
-    opts = makeOptionsObj(port, host, false, retryTimeMs, timeOutMs);
-  }
 
   return waitForStatus(opts);
 }
@@ -266,15 +267,12 @@ function waitUntilFreeOnHost(port, host, retryTimeMs, timeOutMs) {
  */
 function waitUntilFree(port, retryTimeMs, timeOutMs) {
   // the first argument may be an object, if it is not, make an object
-  let opts;
-  if (is.obj(port)) {
-    opts = Object.assign({}, port, {
+  const opts = Object.assign({},
+    makeOptionsObj(port, LOCALHOST, false, retryTimeMs, timeOutMs),
+    {
       host: LOCALHOST,
       inUse: false,
     });
-  } else {
-    opts = makeOptionsObj(port, LOCALHOST, false, retryTimeMs, timeOutMs);
-  }
 
   return waitForStatus(opts);
 }
@@ -285,6 +283,7 @@ function waitUntilFree(port, retryTimeMs, timeOutMs) {
  * Note: you have to be super user to correctly test system ports (0-1023).
  * @param {Number|Object} port a valid TCP port number.
  *   If an object, must contain all the parameters as properties.
+ * @param {string} [host] the hostname or IP address - default is LOCALHOST
  * @param {Number} [retryTimeMs] the retry interval in milliseconds - default is is 500ms
  * @param {Number} [timeOutMs] the amount of time to wait until port is free
  * @return {Object} A deferred promise from the q library.
@@ -301,13 +300,11 @@ function waitUntilFree(port, retryTimeMs, timeOutMs) {
  */
 function waitUntilUsedOnHost(port, host, retryTimeMs, timeOutMs) {
   // the first argument may be an object, if it is not, make an object
-  let opts;
-  if (is.obj(port)) {
-    opts = port;
-    opts.inUse = true;
-  } else {
-    opts = makeOptionsObj(port, host, true, retryTimeMs, timeOutMs);
-  }
+  const opts = Object.assign({},
+    makeOptionsObj(port, host, true, retryTimeMs, timeOutMs),
+    {
+      inUse: true,
+    });
 
   return waitForStatus(opts);
 }
@@ -333,15 +330,12 @@ function waitUntilUsedOnHost(port, host, retryTimeMs, timeOutMs) {
  */
 function waitUntilUsed(port, retryTimeMs, timeOutMs) {
   // the first argument may be an object, if it is not, make an object
-  let opts;
-  if (is.obj(port)) {
-    opts = Object.assign({}, port, {
+  const opts = Object.assign({},
+    makeOptionsObj(port, LOCALHOST, true, retryTimeMs, timeOutMs),
+    {
       host: LOCALHOST,
       inUse: true,
     });
-  } else {
-    opts = makeOptionsObj(port, LOCALHOST, true, retryTimeMs, timeOutMs);
-  }
 
   return waitUntilUsedOnHost(opts);
 }
