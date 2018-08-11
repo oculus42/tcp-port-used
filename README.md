@@ -8,8 +8,8 @@ port-used
 [![Dependencies](https://david-dm.org/oculus42/port-used.svg)](https://david-dm.org/oculus42/port-used) 
 [![Greenkeeper badge](https://badges.greenkeeper.io/oculus42/port-used.svg)](https://greenkeeper.io/) 
 
-A simple Node.js module to check if a TCP port is currently in use. It returns a
-deferred promise from the q library.
+A simple Node.js module to check if a TCP port is currently in use. It returns a promise.
+Based on [tcp-port-used](https://www.npmjs.com/package/tcp-port-used)
 
 ## Installation
 
@@ -18,59 +18,77 @@ deferred promise from the q library.
 ## Examples
 To check a port's state:
 
-    var tcpPortUsed = require('port-used');
+    var portUsed = require('port-used');
 
-    tcpPortUsed.check(44201, '127.0.0.1')
-    .then(function(inUse) {
-        console.log('Port 44201 usage: '+inUse);
-    }, function(err) {
-        console.error('Error on check:', err.message);
+    portUsed.check(44201, '127.0.0.1')
+    .then((inUse) => {
+      console.log('Port 44201 usage: '+inUse);
+    }, (err) => {
+      console.error('Error on check:', err.message);
     });
 
 To wait until a port on localhost is available:
 
-    tcpPortUsed.waitUntilFree(44203, 500, 4000)
-    .then(function() {
-        console.log('Port 44203 is now free.');
-    }, function(err) {
-        console.log('Error:', err.message);
+    portUsed.waitUntilFree({
+      port: 44203,
+      retryTimeMs: 500,
+      timeOutMs: 4000,
+    }).then(() => {
+      console.log('Port 44203 is now free.');
+    }, (err) => {
+      console.log('Error:', err.message);
     });
 
 To wait until a port on a host is available:
 
-    tcpPortUsed.waitUntilFreeOnHost(44203, 'some.host.com', 500, 4000)
-    .then(function() {
-        console.log('Port 44203 on some.host.com is now free.');
-    }, function(err) {
-        console.log('Error:', err.message);
+    portUsed.waitUntilFreeOnHost({
+      port: 44203,
+      host: 'some.host.com',
+      retryTimeMs: 500,
+      timeOutMs: 4000,
+    }).then(() => {
+      console.log('Port 44203 on some.host.com is now free.');
+    }, (err) => {
+      console.log('Error:', err.message);
     });
 
 To wait until a port on localhost is accepting connections:
 
-    tcpPortUsed.waitUntilUsed(44204, 500, 4000)
-    .then(function() {
-        console.log('Port 44204 is now in use.');
-    }, function(err) {
-        console.log('Error:', err.message);
+    portUsed.waitUntilUsed({
+      port: 44204,
+      retryTimeMs: 500,
+      timeOutMs: 4000,
+    }).then(() => {
+      console.log('Port 44204 is now in use.');
+    }, (err) => {
+      console.log('Error:', err.message);
     });
 
 To wait until a port on a host is accepting connections:
 
-    tcpPortUsed.waitUntilUsedOnHost(44204, 'some.host.com', 500, 4000)
-    .then(function() {
-        console.log('Port 44204 on some.host.com is now in use.');
-    }, function(err) {
-        console.log('Error:', err.message);
+    portUsed.waitUntilUsedOnHost({
+      port: 44204,
+      host: 'some.host.com',
+      retryTimeMs: 500,
+      timeOutMs: 4000,
+    }).then(() => {
+      console.log('Port 44204 on some.host.com is now in use.');
+    }, (err) => {
+      console.log('Error:', err.message);
     });
 
 To wait until a port on a host is in specific state:
 
-    var inUse = true;   // wait until the port is in use
-    tcpPortUsed.waitForStatus(44204, 'some.host.com', inUse, 500, 4000)
-    .then(function() {
-        console.log('Port 44204 on some.host.com is now in use.');
-    }, function(err) {
-        console.log('Error:', err.message);
+    portUsed.waitForStatus({
+      port: 44204,
+      host: 'some.host.com',
+      inUse: true,
+      retryTimeMs: 500,
+      timeOutMs: 4000,
+    }).then(() => {
+      console.log('Port 44204 on some.host.com is now in use.');
+    }, (err) => {
+      console.log('Error:', err.message);
     });
 
 
@@ -90,102 +108,104 @@ in use and false means the port is free.
 
 **Returns:**
 
-**Object** A deferred promise from the q module.
+**Object** A promise.
 
-### waitUntilFree(port [, retryTimeMs] [, timeOutMs])
-Returns a deferred promise and fulfills it only when the localhost socket is
+### waitUntilFree(options)
+Returns a promise and fulfills it only when the localhost socket is
 free.  Will retry on an interval specified in retryTimeMs until the timeout. If
-not defined the retryTime is 200 ms and the timeout is 2000 ms.
+not defined the retryTime is 250 ms and the timeout is 2000 ms.
 
 **Parameters:**
 
-* **Number|Object** *port* a valid TCP port number. If an object must contain
-  all the parameters as properties.
-* **Number** *[retryTimeMs]* the retry interval in milliseconds - defaultis is 100ms.
-* **Number** *[timeOutMs]* the amount of time to wait until port is free. Default 300ms.
+* **Object** *options* an object of the following:
+  * **Number** *port* a valid TCP port number.
+  * **Number** *[retryTimeMs]* the retry interval in ms. Default is 250ms.
+  * **Number** *[timeOutMs]* the amount of time to wait until port is free. Default is 2000ms.
 
 **Returns:**
 
-**Object** A deferred promise from the q module.
+**Object** A promise.
 
 
-### waitUntilFreeOnHost(port [, host] [, retryTimeMs] [, timeOutMs])
-Returns a deferred promise and fulfills it only when the localhost socket is
+### waitUntilFreeOnHost(options)
+Returns a promise and fulfills it only when the localhost socket is
 free.  Will retry on an interval specified in retryTimeMs until the timeout. If
-not defined the retryTime is 200 ms and the timeout is 2000 ms. If the host is
+not defined the retryTime is 250 ms and the timeout is 2000 ms. If the host is
 not defined, the modules uses the default '127.0.0.1'.
 
 **Parameters:**
 
-* **Number|Object** *port* a valid TCP port number. If an object, must contain
-  all the parameters as properties.
-* **String** *host* The host name or IP address of the host. Default, if not defined: '127.0.0.1'
-* **Number** *[retryTimeMs]* the retry interval in milliseconds - defaultis is 100ms.
-* **Number** *[timeOutMs]* the amount of time to wait until port is free. Default 300ms.
+* **Object** *options* an object of the following:
+  * **Number|Object** *port* a valid TCP port number.
+  * **String** *host* The host name or IP address of the host. Default, if not defined: '127.0.0.1'
+  * **Number** *[retryTimeMs]* the retry interval in ms. Default is 250ms.
+  * **Number** *[timeOutMs]* the amount of time to wait until port is free. Default is 2000ms.
 
 **Returns:**
 
-**Object** A deferred promise from the q module.
+**Object** A promise.
 
-### waitUntilUsed(port [, retryTimeMs] [, timeOutMs])
-Returns a deferred promise and fulfills it only when the socket is accepting
+### waitUntilUsed(options)
+Returns a promise and fulfills it only when the socket is accepting
 connections. Will retry on an interval specified in retryTimeMs until the
-timeout. If the host is not defined the retryTime is 200 ms and the timeout is
+timeout. If the host is not defined the retryTime is 250 ms and the timeout is
 2000 ms.
 
 **Parameters:**
 
-* **Number|Object** *port* a valid TCP port number. If an object, must contain
-  all the parameters as properties.
-* **Number** *[retryTimeMs]* the retry interval in milliseconds - defaultis is 100ms.
-* **Number** *[timeOutMs]* the amount of time to wait until port is free. Default 300ms.
+* **Object** *options* an object of the following:
+  * **Number|Object** *port* a valid TCP port number.
+  * **Number** *[retryTimeMs]* the retry interval in ms. Default is 250ms.
+  * **Number** *[timeOutMs]* the amount of time to wait until port is free. Default is 2000ms.
 
 **Returns:**
 
-**Object** A deferred promise from the q module.
+**Object** A promise.
 
-### waitUntilUsedOnHost(port [, host] [, retryTimeMs] [, timeOutMs])
-Returns a deferred promise and fulfills it only when the socket is accepting
+### waitUntilUsedOnHost(options)
+Returns a promise and fulfills it only when the socket is accepting
 connections. Will retry on an interval specified in retryTimeMs until the
-timeout. If not defined the retryTime is 200 ms and the timeout is 2000 ms.
+timeout. If not defined the retryTime is 250 ms and the timeout is 2000 ms.
 If the host is not defined the module uses the default '127.0.0.1'.
 
 **Parameters:**
 
-* **Number|Object** *port* a valid TCP port number. If an object, must contain
-  all the parameters as properties.
-* **String** *host* The host name or IP address of the host. Default, if not defined: '127.0.0.1'
-* **Number** *[retryTimeMs]* the retry interval in milliseconds - defaultis is 100ms.
-* **Number** *[timeOutMs]* the amount of time to wait until port is free. Default 300ms.
+* **Object** *options* an object of the following:
+  * **Number|Object** *port* a valid TCP port number.
+  * **String** *host* The host name or IP address of the host. Default, if not defined: '127.0.0.1'
+  * **Number** *[retryTimeMs]* the retry interval in ms. Default is 250ms.
+  * **Number** *[timeOutMs]* the amount of time to wait until port is free. Default is 2000ms.
 
 **Returns:**
 
-**Object** A deferred promise from the q module.
+**Object** A promise.
 
-### waitForStatus(port, host, status [, retryTimeMs] [, timeOutMs])
+### waitForStatus(options)
 Waits until the port on host matches the boolean status in terms of use. If the
 status is true, the promise defers until the port is in use. If the status is
 false the promise defers until the port is free. If the host is undefined or
 null, the module uses the default '127.0.0.1'. Also, if not defined the
-retryTime is 200 ms and the timeout is 2000 ms.
+retryTime is 250 ms and the timeout is 2000 ms.
 
 **Parameters:**
 
-* **Number** *port* a valid TCP port number. If an object, must contain all the
-  parameters as properties.
-* **String** *host* The host name or IP address of the host. Default, if not defined: '127.0.0.1'
-* **Boolean** *status* A boolean describing the condition to wait for in terms of "in use." True indicates wait until the port is in use. False indicates wait until the port is free.
-* **Number** *[retryTimeMs]* the retry interval in milliseconds - defaultis is 100ms.
-* **Number** *[timeOutMs]* the amount of time to wait until port is free. Default 300ms.
+* **Object** *options* an object of the following:
+  * **Number** *port* a valid TCP port number.
+  * **String** *host* The host name or IP address of the host. Default, if not defined: '127.0.0.1'
+  * **Boolean** *status* A boolean describing the condition to wait for in terms of "in use."  
+    True indicates wait until the port is in use. False indicates wait until the port is free.
+  * **Number** *[retryTimeMs]* the retry interval in ms. Default is 250ms.
+  * **Number** *[timeOutMs]* the amount of time to wait until port is free. Default 2000ms.
 
 **Returns:**
 
-**Object** A deferred promise from the q module.
+**Object** A promise.
 
 ## License
 
 The MIT License (MIT)
 
+Copyright (c) 2018 oculus42
 Copyright (c) 2013 jut-io
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of

@@ -31,11 +31,11 @@ function getDeferred() {
 
 /**
  * Creates an options object from all the possible arguments
- * @param {Number} port a valid TCP port number
+ * @param {Number|Object} port a valid TCP port number
  * @param {String} host The DNS name or IP address.
  * @param {Boolean} inUse The desired in use status to wait for
- * @param {Number} retryTimeMs the retry interval in milliseconds - default is 200ms
- * @param {Number} timeOutMs the amount of time to wait until port is free default is 1000ms
+ * @param {Number} retryTimeMs the retry interval in ms. Default is 250ms
+ * @param {Number} timeOutMs the amount of time to wait until port is free. Default is 2000ms
  * @return {Object} An options object with all the above parameters as properties.
  */
 function makeOptionsObj(port, host, inUse, retryTimeMs, timeOutMs) {
@@ -61,26 +61,30 @@ function makeOptionsObj(port, host, inUse, retryTimeMs, timeOutMs) {
     opts.timeOutMs = TIMEOUT;
   }
 
+  if (opts.host === undefined) {
+    opts.host = LOCALHOST;
+  }
+
   return opts;
 }
 
 /**
  * Checks if a TCP port is in use by creating the socket and binding it to the
- * target port. Once bound, successfully, it's assume the port is availble.
+ * target port. Once bound, successfully, it's assume the port is available.
  * After the socket is closed or in error, the promise is resolved.
  * Note: you have to be super user to correctly test system ports (0-1023).
  * @param {Number|Object} port The port you are curious to see if available.
  *   If an object, must have the parameters as properties.
- * @param {String} [host] May be a DNS name or IP address. Default '127.0.0.1'
- * @return {Object} A deferred Q promise.
+ * @param {String} [host] The hostname or IP address where the socket is.
+ * @return {Promise} A promise.
  *
  * Example usage:
  *
- * var portUsed = require('port-used');
+ * const portUsed = require('port-used');
  * portUsed.check(22, '127.0.0.1')
- * .then(function(inUse) {
- * }, function(err) {
- *    console.error('Error on check: '+util.inspect(err));
+ * .then((inUse) => {
+ * }, (err) => {
+ *   console.error('Error on check: '+util.inspect(err));
  * });
  */
 function check(port, host) {
@@ -133,17 +137,17 @@ function check(port, host) {
 }
 
 /**
- * Creates a deferred promise and fulfills it only when the socket's usage
+ * Creates a promise and fulfills it only when the socket's usage
  * equals status in terms of 'in use' (false === not in use, true === in use).
  * Will retry on an interval specified in retryTimeMs.  Note: you have to be
  * super user to correctly test system ports (0-1023).
  * @param {Object} options
  * @param {Number} options.port a valid TCP port if a number.
- * @param {String} options.host The DNS name or IP address.
+ * @param {String} options.host The hostname or IP address where the socket is.
  * @param {Boolean} options.inUse The desired in use status to wait for
- * @param {Number} [options.retryTimeMs] the retry interval in milliseconds - default is 200ms
- * @param {Number} [options.timeOutMs] the amount of time to wait until port is free default is 1000ms
- * @return {Object} A deferred promise from the Q library.
+ * @param {Number} [options.retryTimeMs] the retry interval in ms. Default is 250ms
+ * @param {Number} [options.timeOutMs] time to wait until port is free. Default is 2000ms
+* @return {Promise} A promise.
  *
  * Example usage:
  *
@@ -218,18 +222,18 @@ function waitForStatus(options) {
 }
 
 /**
- * Creates a deferred promise and fulfills it only when the socket is free.
+ * Creates a promise and fulfills it only when the socket is free.
  * Will retry on an interval specified in retryTimeMs.
  * Note: you have to be super user to correctly test system ports (0-1023).
  * @param {Number} options.port a valid TCP port number
- * @param {String} [options.host] The hostname or IP address of where the socket is.
- * @param {Number} [options.retryTimeMs] the retry interval in ms - default is 100ms.
- * @param {Number} [options.timeOutMs] the amount of time to wait until port is free. Default 300ms.
- * @return {Object} A deferred promise from the q library.
+ * @param {String} [options.host] The hostname or IP address where the socket is.
+ * @param {Number} [options.retryTimeMs] the retry interval in ms. Default is 250ms.
+ * @param {Number} [options.timeOutMs] the time to wait until port is free. Default is 2000ms.
+* @return {Promise} A promise.
  *
  * Example usage:
  *
- * var portUsed = require('port-used');
+ * const portUsed = require('port-used');
  * portUsed.waitUntilFreeOnHost({
  *   port: 44203,
  *   host: 'some.host.com'
@@ -255,19 +259,22 @@ function waitUntilFreeOnHost(options) {
  * arguments for hostnames. The host is set to the localhost '127.0.0.1'.
  * @param {Object} options
  * @param {Number} options.port a valid TCP port number.
- * @param {Number} [options.retryTimeMs] the retry interval in ms - default is 100ms.
- * @param {Number} [options.timeOutMs] the amount of time to wait until port is free. Default 300ms.
- * @return {Object} A deferred promise from the q library.
+ * @param {Number} [options.retryTimeMs] the retry interval in ms. Default is 250ms.
+ * @param {Number} [options.timeOutMs] the time to wait until port is free. Default is 2000ms.
+* @return {Promise} A promise.
  *
  * Example usage:
  *
- * var portUsed = require('port-used');
- * portUsed.waitUntilFree(44203, 500, 4000)
- * .then(function() {
- *     console.log('Port 44203 is now free.');
- *  }, function(err) {
- *     console.log('Error: ', error.message);
- *  });
+ * const portUsed = require('port-used');
+ * portUsed.waitUntilFree({
+ *   port: 44203,
+ *   retryTimeMs: 500,
+ *   timeOutMs: 4000
+ * }).then(() => {
+ *   console.log('Port 44203 is now free.');
+ * }, (err) => {
+ *   console.log('Error: ', error.message);
+ * });
  */
 function waitUntilFree(options) {
   // the first argument may be an object, if it is not, make an object
@@ -280,24 +287,28 @@ function waitUntilFree(options) {
 }
 
 /**
- * Creates a deferred promise and fulfills it only when the socket is used.
+ * Creates a promise and fulfills it only when the socket is used.
  * Will retry on an interval specified in retryTimeMs.
  * Note: you have to be super user to correctly test system ports (0-1023).
- * @param {Object}
+ * @param {Object} options
  * @param {Number} options.port a valid TCP port number.
- * @param {string} [options.host] the hostname or IP address - default is LOCALHOST
- * @param {Number} [options.retryTimeMs] the retry interval in ms - default is 500ms
- * @param {Number} [options.timeOutMs] the amount of time to wait until port is free
- * @return {Object} A deferred promise from the q library.
+ * @param {string} [options.host] the hostname or IP address. Default is LOCALHOST
+ * @param {Number} [options.retryTimeMs] the retry interval in ms. Default is 500ms
+ * @param {Number} [options.timeOutMs] the time to wait until port is free. Default is 2000ms
+* @return {Promise} A promise.
  *
  * Example usage:
  *
- * var portUsed = require('port-used');
- * portUsed.waitUntilUsedOnHost(44204, 'some.host.com', 500, 4000)
- * .then(function() {
- *     console.log('Port 44204 is now in use.');
- * }, function(err) {
- *     console.log('Error: ', error.message);
+ * const portUsed = require('port-used');
+ * portUsed.waitUntilUsedOnHost({
+ *   port: 44204,
+ *   host: 'some.host.com',
+ *   retryTimeMs: 500,
+ *   timeOutMs: 4000
+ * }).then(() => {
+ *   console.log('Port 44204 is now in use.');
+ * }, (err) => {
+ *   console.log('Error: ', error.message);
  * });
  */
 function waitUntilUsedOnHost(options) {
@@ -314,15 +325,18 @@ function waitUntilUsedOnHost(options) {
  * for host addresses. This function works only for localhost.
  * @param {Object} options
  * @param {Number} options.port a valid TCP port number.
- * @param {Number} [options.retryTimeMs] the retry interval in ms - default is 500ms
- * @param {Number} [options.timeOutMs] the amount of time to wait until port is free
- * @return {Object} A deferred promise from the q library.
+ * @param {Number} [options.retryTimeMs] the retry interval in ms. Default is 500ms
+ * @param {Number} [options.timeOutMs] the time to wait until port is free. Default is 2000ms
+* @return {Promise} A promise.
  *
  * Example usage:
  *
- * var portUsed = require('port-used');
- * portUsed.waitUntilUsed(44204, 500, 4000)
- * .then(() => {
+ * const portUsed = require('port-used');
+ * portUsed.waitUntilUsed({
+ *   port: 44204,
+ *   retryTimeMs: 500,
+ *   timeOutMs: 4000
+ * }).then(() => {
  *     console.log('Port 44204 is now in use.');
  * }, (error) => {
  *     console.log('Error: ', error.message);
