@@ -1,4 +1,7 @@
+.nyc_output
+coverage
 lib-cov
+
 *.seed
 *.log
 *.csv
