@@ -61,7 +61,7 @@ function makeOptionsObj(port, host, inUse, retryTimeMs, timeOutMs) {
  *
  * Example usage:
  *
- * var tcpPortUsed = require('tcp-port-used');
+ * var tcpPortUsed = require('port-used');
  * tcpPortUsed.check(22, '127.0.0.1')
  * .then(function(inUse) {
  * }, function(err) {
@@ -132,7 +132,7 @@ function check(port, host) {
  *
  * Example usage:
  *
- * var tcpPortUsed = require('tcp-port-used');
+ * var tcpPortUsed = require('port-used');
  * tcpPortUsed.waitForStatus(44204, 'some.host.com', true, 500, 4000)
  * .then(function() {
  *     console.log('Port 44204 is now in use.');
@@ -223,7 +223,7 @@ function waitForStatus(port, host, inUse, retryTimeMs, timeOutMs) {
  *
  * Example usage:
  *
- * var tcpPortUsed = require('tcp-port-used');
+ * var tcpPortUsed = require('port-used');
  * tcpPortUsed.waitUntilFreeOnHost(44203, 'some.host.com', 500, 4000)
  * .then(function() {
  *     console.log('Port 44203 is now free.');
@@ -256,7 +256,7 @@ function waitUntilFreeOnHost(port, host, retryTimeMs, timeOutMs) {
  *
  * Example usage:
  *
- * var tcpPortUsed = require('tcp-port-used');
+ * var tcpPortUsed = require('port-used');
  * tcpPortUsed.waitUntilFree(44203, 500, 4000)
  * .then(function() {
  *     console.log('Port 44203 is now free.');
@@ -291,7 +291,7 @@ function waitUntilFree(port, retryTimeMs, timeOutMs) {
  *
  * Example usage:
  *
- * var tcpPortUsed = require('tcp-port-used');
+ * var tcpPortUsed = require('port-used');
  * tcpPortUsed.waitUntilUsedOnHost(44204, 'some.host.com', 500, 4000)
  * .then(function() {
  *     console.log('Port 44204 is now in use.');
@@ -323,7 +323,7 @@ function waitUntilUsedOnHost(port, host, retryTimeMs, timeOutMs) {
  *
  * Example usage:
  *
- * var tcpPortUsed = require('tcp-port-used');
+ * var tcpPortUsed = require('port-used');
  * tcpPortUsed.waitUntilUsed(44204, 500, 4000)
  * .then(() => {
  *     console.log('Port 44204 is now in use.');

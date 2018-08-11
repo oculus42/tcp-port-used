@@ -9,7 +9,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git://github.com/stdarg/tcp-port-used.git"
+        "url": "git://github.com/oculus42/port-used.git"
     },
     "keywords": [
         "tcp",
@@ -25,9 +25,9 @@
     ],
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/oculus42/tcp-port-used/issues"
+        "url": "https://github.com/oculus42/port-used/issues"
     },
-    "homepage": "https://github.com/oculus42/tcp-port-used",
+    "homepage": "https://github.com/oculus42/port-used",
     "dependencies": {
         "is2": "2.0.1"
     },

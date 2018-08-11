@@ -1,4 +1,4 @@
-tcp-port-used
+port-used
 =============
 
 A simple Node.js module to check if a TCP port is currently in use. It returns a
@@ -6,12 +6,12 @@ deferred promise from the q library.
 
 ## Installation
 
-    npm install tcp-port-used
+    npm install port-used
 
 ## Examples
 To check a port's state:
 
-    var tcpPortUsed = require('tcp-port-used');
+    var tcpPortUsed = require('port-used');
 
     tcpPortUsed.check(44201, '127.0.0.1')
     .then(function(inUse) {
