@@ -1,6 +1,13 @@
 port-used
 =============
 
+[![npm](https://img.shields.io/npm/v/port-used.svg)](https://www.npmjs.com/package/port-used) 
+[![Build Status](https://travis-ci.org/oculus42/port-used.svg?branch=master)](https://travis-ci.org/oculus42/port-used) 
+[![Code Climate](https://codeclimate.com/github/oculus42/port-used/badges/gpa.svg)](https://codeclimate.com/github/oculus42/port-used) 
+[![Test Coverage](https://codeclimate.com/github/oculus42/port-used/badges/coverage.svg)](https://codeclimate.com/github/oculus42/port-used/coverage) 
+[![Dependencies](https://david-dm.org/oculus42/port-used.svg)](https://david-dm.org/oculus42/port-used) 
+[![Greenkeeper badge](https://badges.greenkeeper.io/oculus42/port-used.svg)](https://greenkeeper.io/) 
+
 A simple Node.js module to check if a TCP port is currently in use. It returns a
 deferred promise from the q library.
 
