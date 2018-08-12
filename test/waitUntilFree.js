@@ -57,7 +57,7 @@ function bindPort(port, cb) {
   server.on('listening', listenEventCb);
 }
 
-describe('waitUntilFreeOnHost', function () {
+describe('waitUntilFree', function () {
   this.timeout(2000);
 
   before((cb) => {
@@ -67,11 +67,11 @@ describe('waitUntilFreeOnHost', function () {
   });
 
   it('should reject promise for used port number after timeout', (done) => {
-    tcpPortUsed.waitUntilFreeOnHost({
+    tcpPortUsed.waitUntilFree({
       port: 44203, host: '127.0.0.1', retryTimeMs: 500, timeOutMs: 1000,
     })
       .then(() => {
-        done(new Error('waitUntilFreeOnHost unexpectedly succeeded'));
+        done(new Error('waitUntilFree unexpectedly succeeded'));
       }, (err) => {
         if (err.message === 'timeout') {
           done();
@@ -81,8 +81,8 @@ describe('waitUntilFreeOnHost', function () {
       });
   });
 
-  it('should fufill promise for free port number', (done) => {
-    tcpPortUsed.waitUntilFreeOnHost({
+  it('should fulfill promise for free port number', (done) => {
+    tcpPortUsed.waitUntilFree({
       port: 44205, host: '127.0.0.1', retryTimeMs: 500, timeOutM: 4000,
     })
       .then(() => {
@@ -92,8 +92,8 @@ describe('waitUntilFreeOnHost', function () {
       });
   });
 
-  it('should fufill promise for free port number and default retry and timeout', (done) => {
-    tcpPortUsed.waitUntilFreeOnHost({ port: 44205 })
+  it('should fulfill promise for free port number and default retry and timeout', (done) => {
+    tcpPortUsed.waitUntilFree({ port: 44205 })
       .then(() => {
         done();
       }, (err) => {
@@ -102,9 +102,9 @@ describe('waitUntilFreeOnHost', function () {
   });
 
   it('should reject promise for invalid port number', (done) => {
-    tcpPortUsed.waitUntilFreeOnHost({})
+    tcpPortUsed.waitUntilFree({})
       .then(() => {
-        done(new Error('waitUntilFreeOnHost unexpectedly succeeded'));
+        done(new Error('waitUntilFree unexpectedly succeeded'));
       }, (err) => {
         if (err.message === 'invalid port: undefined') {
           done();
@@ -143,7 +143,7 @@ describe('waitUntilFree', function () {
       });
   });
 
-  it('should fufill promise for free port number', (done) => {
+  it('should fulfill promise for free port number', (done) => {
     tcpPortUsed.waitUntilFree({ port: 44205, retryTimeMs: 500, timeOutMs: 4000 })
       .then(() => {
         done();
@@ -152,7 +152,7 @@ describe('waitUntilFree', function () {
       });
   });
 
-  it('should fufill promise for free port number and default retry and timeout', (done) => {
+  it('should fulfill promise for free port number and default retry and timeout', (done) => {
     tcpPortUsed.waitUntilFree({ port: 44205 })
       .then(() => {
         done();
@@ -164,7 +164,7 @@ describe('waitUntilFree', function () {
   it('should reject promise for invalid port number', (done) => {
     tcpPortUsed.waitUntilFree({})
       .then(() => {
-        done(new Error('waitUntilFreeOnHost: unexpectedly succeeded'));
+        done(new Error('waitUntilFree: unexpectedly succeeded'));
       }, (err) => {
         if (err.message === 'invalid port: undefined') {
           done();

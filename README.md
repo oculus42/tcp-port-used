@@ -27,21 +27,9 @@ To check a port's state:
       console.error('Error on check:', err.message);
     });
 
-To wait until a port on localhost is available:
-
-    portUsed.waitUntilFree({
-      port: 44203,
-      retryTimeMs: 500,
-      timeOutMs: 4000,
-    }).then(() => {
-      console.log('Port 44203 is now free.');
-    }, (err) => {
-      console.log('Error:', err.message);
-    });
-
 To wait until a port on a host is available:
 
-    portUsed.waitUntilFreeOnHost({
+    portUsed.waitUntilFree({
       port: 44203,
       host: 'some.host.com',
       retryTimeMs: 500,
@@ -52,21 +40,9 @@ To wait until a port on a host is available:
       console.log('Error:', err.message);
     });
 
-To wait until a port on localhost is accepting connections:
-
-    portUsed.waitUntilUsed({
-      port: 44204,
-      retryTimeMs: 500,
-      timeOutMs: 4000,
-    }).then(() => {
-      console.log('Port 44204 is now in use.');
-    }, (err) => {
-      console.log('Error:', err.message);
-    });
-
 To wait until a port on a host is accepting connections:
 
-    portUsed.waitUntilUsedOnHost({
+    portUsed.waitUntilUsed({
       port: 44204,
       host: 'some.host.com',
       retryTimeMs: 500,
@@ -111,24 +87,7 @@ in use and false means the port is free.
 **Object** A promise.
 
 ### waitUntilFree(options)
-Returns a promise and fulfills it only when the localhost socket is
-free.  Will retry on an interval specified in retryTimeMs until the timeout. If
-not defined the retryTime is 250 ms and the timeout is 2000 ms.
-
-**Parameters:**
-
-* **Object** *options* an object of the following:
-  * **Number** *port* a valid TCP port number.
-  * **Number** *[retryTimeMs]* the retry interval in ms. Default is 250ms.
-  * **Number** *[timeOutMs]* the amount of time to wait until port is free. Default is 2000ms.
-
-**Returns:**
-
-**Object** A promise.
-
-
-### waitUntilFreeOnHost(options)
-Returns a promise and fulfills it only when the localhost socket is
+Returns a promise and fulfills it only when the host's socket is
 free.  Will retry on an interval specified in retryTimeMs until the timeout. If
 not defined the retryTime is 250 ms and the timeout is 2000 ms. If the host is
 not defined, the modules uses the default '127.0.0.1'.
@@ -146,23 +105,6 @@ not defined, the modules uses the default '127.0.0.1'.
 **Object** A promise.
 
 ### waitUntilUsed(options)
-Returns a promise and fulfills it only when the socket is accepting
-connections. Will retry on an interval specified in retryTimeMs until the
-timeout. If the host is not defined the retryTime is 250 ms and the timeout is
-2000 ms.
-
-**Parameters:**
-
-* **Object** *options* an object of the following:
-  * **Number|Object** *port* a valid TCP port number.
-  * **Number** *[retryTimeMs]* the retry interval in ms. Default is 250ms.
-  * **Number** *[timeOutMs]* the amount of time to wait until port is free. Default is 2000ms.
-
-**Returns:**
-
-**Object** A promise.
-
-### waitUntilUsedOnHost(options)
 Returns a promise and fulfills it only when the socket is accepting
 connections. Will retry on an interval specified in retryTimeMs until the
 timeout. If not defined the retryTime is 250 ms and the timeout is 2000 ms.
@@ -206,7 +148,7 @@ retryTime is 250 ms and the timeout is 2000 ms.
 The MIT License (MIT)
 
 Copyright (c) 2018 oculus42
-Copyright (c) 2013 jut-io
+Copyright (c) 2013 jut-io (stdargs)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -224,4 +166,3 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-

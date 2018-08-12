@@ -57,7 +57,7 @@ function bindPort(port, cb) {
   server.on('listening', listenEventCb);
 }
 
-describe('waitUntilUsedOnHost', () => {
+describe('waitUntilUsed', () => {
   before(() => {
     setTimeout(() => {
       bindPort(44204);
@@ -66,7 +66,7 @@ describe('waitUntilUsedOnHost', () => {
 
   it('should wait until the port is listening', function (done) {
     this.timeout(5000);
-    tcpPortUsed.waitUntilUsedOnHost({
+    tcpPortUsed.waitUntilUsed({
       port: 44204, host: '127.0.0.1', retryTimeMs: 500, timeOutMs: 4000,
     })
       .then(() => {
@@ -78,7 +78,7 @@ describe('waitUntilUsedOnHost', () => {
 
   it('should reject promise when given an invalid port', function (done) {
     this.timeout(3000);
-    tcpPortUsed.waitUntilUsedOnHost({
+    tcpPortUsed.waitUntilUsed({
       port: 'hello', host: '127.0.0.1', retryTimeMs: 500, timeOutMs: 2000,
     })
       .then(() => {
@@ -94,7 +94,7 @@ describe('waitUntilUsedOnHost', () => {
 
   it('should timeout when no port is listening', function (done) {
     this.timeout(3000);
-    tcpPortUsed.waitUntilUsedOnHost({
+    tcpPortUsed.waitUntilUsed({
       port: 44205, host: '127.0.0.1', retryTimeMs: 500, tmieOutMs: 2000,
     })
       .then(() => {

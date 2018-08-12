@@ -143,11 +143,11 @@ function check(port, host) {
  * super user to correctly test system ports (0-1023).
  * @param {Object} options
  * @param {Number} options.port a valid TCP port if a number.
- * @param {String} options.host The hostname or IP address where the socket is.
  * @param {Boolean} options.inUse The desired in use status to wait for
+ * @param {String} [options.host] The hostname or IP address where the socket is.
  * @param {Number} [options.retryTimeMs] the retry interval in ms. Default is 250ms
  * @param {Number} [options.timeOutMs] time to wait until port is free. Default is 2000ms
-* @return {Promise} A promise.
+ * @return {Promise} A promise.
  *
  * Example usage:
  *
@@ -234,40 +234,9 @@ function waitForStatus(options) {
  * Example usage:
  *
  * const portUsed = require('port-used');
- * portUsed.waitUntilFreeOnHost({
- *   port: 44203,
- *   host: 'some.host.com'
- *   retryTimeMs: 500,
- *   timeOutMs: 4000
- * }).then(() => {
- *   console.log('Port 44203 is now free.');
- * }, (err) => {
- *   console.log('Error: ', error.message);
- * });
- */
-function waitUntilFreeOnHost(options) {
-  // the first argument may be an object, if it is not, make an object
-  const opts = Object.assign({}, makeOptionsObj(options), {
-    inUse: false,
-  });
-
-  return waitForStatus(opts);
-}
-
-/**
- * For compatibility with previous version of the module, that did not provide
- * arguments for hostnames. The host is set to the localhost '127.0.0.1'.
- * @param {Object} options
- * @param {Number} options.port a valid TCP port number.
- * @param {Number} [options.retryTimeMs] the retry interval in ms. Default is 250ms.
- * @param {Number} [options.timeOutMs] the time to wait until port is free. Default is 2000ms.
-* @return {Promise} A promise.
- *
- * Example usage:
- *
- * const portUsed = require('port-used');
  * portUsed.waitUntilFree({
  *   port: 44203,
+ *   host: 'some.host.com'
  *   retryTimeMs: 500,
  *   timeOutMs: 4000
  * }).then(() => {
@@ -279,7 +248,6 @@ function waitUntilFreeOnHost(options) {
 function waitUntilFree(options) {
   // the first argument may be an object, if it is not, make an object
   const opts = Object.assign({}, makeOptionsObj(options), {
-    host: LOCALHOST,
     inUse: false,
   });
 
@@ -300,7 +268,7 @@ function waitUntilFree(options) {
  * Example usage:
  *
  * const portUsed = require('port-used');
- * portUsed.waitUntilUsedOnHost({
+ * portUsed.waitUntilUsed({
  *   port: 44204,
  *   host: 'some.host.com',
  *   retryTimeMs: 500,
@@ -311,7 +279,7 @@ function waitUntilFree(options) {
  *   console.log('Error: ', error.message);
  * });
  */
-function waitUntilUsedOnHost(options) {
+function waitUntilUsed(options) {
   // the first argument may be an object, if it is not, make an object
   const opts = Object.assign({}, makeOptionsObj(options), {
     inUse: true,
@@ -320,42 +288,8 @@ function waitUntilUsedOnHost(options) {
   return waitForStatus(opts);
 }
 
-/**
- * For compatibility to previous version of module which did not have support
- * for host addresses. This function works only for localhost.
- * @param {Object} options
- * @param {Number} options.port a valid TCP port number.
- * @param {Number} [options.retryTimeMs] the retry interval in ms. Default is 500ms
- * @param {Number} [options.timeOutMs] the time to wait until port is free. Default is 2000ms
-* @return {Promise} A promise.
- *
- * Example usage:
- *
- * const portUsed = require('port-used');
- * portUsed.waitUntilUsed({
- *   port: 44204,
- *   retryTimeMs: 500,
- *   timeOutMs: 4000
- * }).then(() => {
- *     console.log('Port 44204 is now in use.');
- * }, (error) => {
- *     console.log('Error: ', error.message);
- * });
- */
-function waitUntilUsed(options) {
-  // the first argument may be an object, if it is not, make an object
-  const opts = Object.assign({}, makeOptionsObj(options), {
-    host: LOCALHOST,
-    inUse: true,
-  });
-
-  return waitUntilUsedOnHost(opts);
-}
-
 exports.check = check;
 exports.makeOptionsObj = makeOptionsObj;
-exports.waitUntilFreeOnHost = waitUntilFreeOnHost;
 exports.waitUntilFree = waitUntilFree;
-exports.waitUntilUsedOnHost = waitUntilUsedOnHost;
 exports.waitUntilUsed = waitUntilUsed;
 exports.waitForStatus = waitForStatus;
