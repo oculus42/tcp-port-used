@@ -88,11 +88,11 @@ in use and false means the port is free.
 
 * **Number|Object** *port* The port you are curious to see if available. If an
   object, must contain all the parameters as properties.
-* **String** *host* The host name or IP address of the host. Default is '127.0.0.1'.
+* **String** *[host]* The host name or IP address of the host. Default is '127.0.0.1'.
 
 **Returns:**
 
-**Object** A promise.
+**Promise** A promise.
 
 ### waitUntilFree(options)
 Returns a promise and fulfills it only when the host's socket is
@@ -110,7 +110,7 @@ not defined, the modules uses the default '127.0.0.1'.
 
 **Returns:**
 
-**Object** A promise.
+**Promise** A promise.
 
 ### waitUntilUsed(options)
 Returns a promise and fulfills it only when the socket is accepting
@@ -128,7 +128,7 @@ If the host is not defined the module uses the default '127.0.0.1'.
 
 **Returns:**
 
-**Object** A promise.
+**Promise** A promise.
 
 ### waitForStatus(options)
 Waits until the port on host matches the boolean status in terms of use. If the
@@ -149,7 +149,7 @@ retryTime is 250 ms and the timeout is 2000 ms.
 
 **Returns:**
 
-**Object** A promise.
+**Promise** A promise.
 
 ## License
 
