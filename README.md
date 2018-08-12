@@ -18,55 +18,63 @@ Based on [tcp-port-used](https://www.npmjs.com/package/tcp-port-used)
 ## Examples
 To check a port's state:
 
-    var portUsed = require('port-used');
+```javascript
+var portUsed = require('port-used');
 
-    portUsed.check(44201, '127.0.0.1')
-    .then((inUse) => {
-      console.log('Port 44201 usage: '+inUse);
-    }, (err) => {
-      console.error('Error on check:', err.message);
-    });
+portUsed.check(44201, '127.0.0.1')
+.then((inUse) => {
+  console.log('Port 44201 usage: '+inUse);
+}, (err) => {
+  console.error('Error on check:', err.message);
+});
+```
 
 To wait until a port on a host is available:
 
-    portUsed.waitUntilFree({
-      port: 44203,
-      host: 'some.host.com',
-      retryTimeMs: 500,
-      timeOutMs: 4000,
-    }).then(() => {
-      console.log('Port 44203 on some.host.com is now free.');
-    }, (err) => {
-      console.log('Error:', err.message);
-    });
+```javascript
+portUsed.waitUntilFree({
+  port: 44203,
+  host: 'some.host.com',
+  retryTime: 500,
+  timeout: 4000,
+}).then(() => {
+  console.log('Port 44203 on some.host.com is now free.');
+}, (err) => {
+  console.log('Error:', err.message);
+});
+```
+
 
 To wait until a port on a host is accepting connections:
 
-    portUsed.waitUntilUsed({
-      port: 44204,
-      host: 'some.host.com',
-      retryTimeMs: 500,
-      timeOutMs: 4000,
-    }).then(() => {
-      console.log('Port 44204 on some.host.com is now in use.');
-    }, (err) => {
-      console.log('Error:', err.message);
-    });
+```javascript
+portUsed.waitUntilUsed({
+  port: 44204,
+  host: 'some.host.com',
+  retryTime: 500,
+  timeout: 4000,
+}).then(() => {
+  console.log('Port 44204 on some.host.com is now in use.');
+}, (err) => {
+  console.log('Error:', err.message);
+});
+```
 
 To wait until a port on a host is in specific state:
 
-    portUsed.waitForStatus({
-      port: 44204,
-      host: 'some.host.com',
-      inUse: true,
-      retryTimeMs: 500,
-      timeOutMs: 4000,
-    }).then(() => {
-      console.log('Port 44204 on some.host.com is now in use.');
-    }, (err) => {
-      console.log('Error:', err.message);
-    });
-
+```javascript
+portUsed.waitForStatus({
+  port: 44204,
+  host: 'some.host.com',
+  inUse: true,
+  retryTime: 500,
+  timeout: 4000,
+}).then(() => {
+  console.log('Port 44204 on some.host.com is now in use.');
+}, (err) => {
+  console.log('Error:', err.message);
+});
+```
 
 ## API
 
@@ -80,7 +88,7 @@ in use and false means the port is free.
 
 * **Number|Object** *port* The port you are curious to see if available. If an
   object, must contain all the parameters as properties.
-* **String** *host* The host name or IP address of the host. Default, if not defined: '127.0.0.1'
+* **String** *host* The host name or IP address of the host. Default is '127.0.0.1'.
 
 **Returns:**
 
@@ -88,17 +96,17 @@ in use and false means the port is free.
 
 ### waitUntilFree(options)
 Returns a promise and fulfills it only when the host's socket is
-free.  Will retry on an interval specified in retryTimeMs until the timeout. If
+free.  Will retry on an interval specified in retryTime until the timeout. If
 not defined the retryTime is 250 ms and the timeout is 2000 ms. If the host is
 not defined, the modules uses the default '127.0.0.1'.
 
 **Parameters:**
 
 * **Object** *options* an object of the following:
-  * **Number|Object** *port* a valid TCP port number.
-  * **String** *host* The host name or IP address of the host. Default, if not defined: '127.0.0.1'
-  * **Number** *[retryTimeMs]* the retry interval in ms. Default is 250ms.
-  * **Number** *[timeOutMs]* the amount of time to wait until port is free. Default is 2000ms.
+  * **Number** *port* a valid TCP port number.
+  * **String** *[host]* The host name or IP address of the host. Default, if not defined: '127.0.0.1'
+  * **Number** *[retryTime]* the retry interval in ms. Default is 250ms.
+  * **Number** *[timeout]* the amount of time to wait until port is free. Default is 2000ms.
 
 **Returns:**
 
@@ -106,17 +114,17 @@ not defined, the modules uses the default '127.0.0.1'.
 
 ### waitUntilUsed(options)
 Returns a promise and fulfills it only when the socket is accepting
-connections. Will retry on an interval specified in retryTimeMs until the
-timeout. If not defined the retryTime is 250 ms and the timeout is 2000 ms.
+connections. Will retry on an interval specified in retryTime until the
+timeout. If not defined, the retryTime is 250 ms and the timeout is 2000 ms.
 If the host is not defined the module uses the default '127.0.0.1'.
 
 **Parameters:**
 
 * **Object** *options* an object of the following:
-  * **Number|Object** *port* a valid TCP port number.
-  * **String** *host* The host name or IP address of the host. Default, if not defined: '127.0.0.1'
-  * **Number** *[retryTimeMs]* the retry interval in ms. Default is 250ms.
-  * **Number** *[timeOutMs]* the amount of time to wait until port is free. Default is 2000ms.
+  * **Number** *port* a valid TCP port number.
+  * **String** *[host]* The host name or IP address of the host. Default is '127.0.0.1'
+  * **Number** *[retryTime]* the retry interval in ms. Default is 250ms.
+  * **Number** *[timeout]* the amount of time to wait until port is free. Default is 2000ms.
 
 **Returns:**
 
@@ -133,11 +141,11 @@ retryTime is 250 ms and the timeout is 2000 ms.
 
 * **Object** *options* an object of the following:
   * **Number** *port* a valid TCP port number.
-  * **String** *host* The host name or IP address of the host. Default, if not defined: '127.0.0.1'
-  * **Boolean** *status* A boolean describing the condition to wait for in terms of "in use."  
+  * **String** *[host]* The host name or IP address of the host. Default is '127.0.0.1'
+  * **Boolean** *inUse* A boolean describing the condition to wait for in terms of "in use."  
     True indicates wait until the port is in use. False indicates wait until the port is free.
-  * **Number** *[retryTimeMs]* the retry interval in ms. Default is 250ms.
-  * **Number** *[timeOutMs]* the amount of time to wait until port is free. Default 2000ms.
+  * **Number** *[retryTime]* the retry interval in ms. Default is 250ms.
+  * **Number** *[timeout]* the amount of time to wait until port is free. Default is 2000ms.
 
 **Returns:**
 
@@ -147,7 +155,7 @@ retryTime is 250 ms and the timeout is 2000 ms.
 
 The MIT License (MIT)
 
-Copyright (c) 2018 oculus42
+Copyright (c) 2018 oculus42  
 Copyright (c) 2013 jut-io (stdarg)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
