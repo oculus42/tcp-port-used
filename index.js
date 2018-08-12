@@ -68,6 +68,16 @@ function makeOptionsObj(port, host, inUse, retryTime, timeout) {
   return opts;
 }
 
+function cleanUpClient(client) {
+  if (client) {
+    client.removeAllListeners('connect');
+    client.removeAllListeners('error');
+    client.end();
+    client.destroy();
+    client.unref();
+  }
+}
+
 /**
  * Checks if a TCP port is in use by creating the socket and binding it to the
  * target port. Once bound, successfully, it's assume the port is available.
@@ -89,45 +99,28 @@ function makeOptionsObj(port, host, inUse, retryTime, timeout) {
  */
 function check(port, host) {
   const deferred = getDeferred();
-  let inUse = true;
-  let client;
   const opts = Object.assign({
     host: LOCALHOST,
   }, makeOptionsObj(port, host));
 
   if (!is.port(opts.port)) {
-    deferred.reject(new Error(`invalid port: ${util.inspect(opts.port)}`));
-    return deferred.promise;
+    return Promise.reject(new Error(`invalid port: ${util.inspect(opts.port)}`));
   }
 
-  function cleanUp() {
-    if (client) {
-      client.removeAllListeners('connect');
-      client.removeAllListeners('error');
-      client.end();
-      client.destroy();
-      client.unref();
-    }
-  }
-
-  function onConnectCb() {
-    deferred.resolve(inUse);
-    cleanUp();
-  }
-
-  function onErrorCb(err) {
+  const client = new net.Socket();
+  client.once('connect', () => {
+    deferred.resolve(true);
+    cleanUpClient(client);
+  });
+  client.once('error', (err) => {
     if (err.code === 'ECONNREFUSED') {
-      inUse = false;
-      deferred.resolve(inUse);
+      deferred.resolve(false);
     } else {
       deferred.reject(err);
     }
-    cleanUp();
-  }
+    cleanUpClient(client);
+  });
 
-  client = new net.Socket();
-  client.once('connect', onConnectCb);
-  client.once('error', onErrorCb);
   client.connect({
     port: opts.port,
     host: opts.host,
