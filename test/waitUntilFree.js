@@ -58,7 +58,7 @@ function bindPort(port, cb) {
 }
 
 describe('waitUntilFree', function () {
-  this.timeout(2000);
+  this.timeout(3000);
 
   before((cb) => {
     bindPort(44203, (err) => {
@@ -83,7 +83,7 @@ describe('waitUntilFree', function () {
 
   it('should fulfill promise for free port number', (done) => {
     tcpPortUsed.waitUntilFree({
-      port: 44205, host: '127.0.0.1', retryTime: 250, timeout: 1000,
+      port: 44205, host: '127.0.0.1', retryTime: 100, timeout: 500,
     })
       .then(() => {
         done();

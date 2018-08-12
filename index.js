@@ -1,17 +1,13 @@
 /**
  * @fileOverview
- * A simple promises-based check to see if a TCP port is already in use.
+ * A promise-based check to see if a TCP port is already in use.
  */
-
-// define the exports first to avoid cyclic dependencies.
 
 const net = require('net');
 const util = require('util');
 const is = require('is2');
 
 // Global Values
-const TIMEOUT = 2000;
-const RETRY_TIME = 250;
 const LOCALHOST = '127.0.0.1';
 
 /**
@@ -39,11 +35,11 @@ function makeOptionsObj(port, host, inUse, retryTime, timeout) {
   }
 
   if (!is.positiveInt(opts.retryTime)) {
-    opts.retryTime = RETRY_TIME;
+    opts.retryTime = 250;
   }
 
   if (!is.positiveInt(opts.timeout)) {
-    opts.timeout = TIMEOUT;
+    opts.timeout = 2000;
   }
 
   if (is.nullOrUndefined(opts.host)) {
@@ -207,7 +203,7 @@ function waitUntilFree(options) {
  * Note: you have to be super user to correctly test system ports (0-1023).
  * @param {Object} options
  * @param {Number} options.port a valid TCP port number.
- * @param {string} [options.host] the hostname or IP address. Default is LOCALHOST
+ * @param {String} [options.host] the hostname or IP address. Default is 127.0.0.1
  * @param {Number} [options.retryTime] the retry interval in ms. Default is 500ms
  * @param {Number} [options.timeout] the time to wait until port is free. Default is 2000ms
 * @return {Promise} A promise.

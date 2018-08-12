@@ -8,7 +8,7 @@ port-used
 [![Dependencies](https://david-dm.org/oculus42/port-used.svg)](https://david-dm.org/oculus42/port-used) 
 [![Greenkeeper badge](https://badges.greenkeeper.io/oculus42/port-used.svg)](https://greenkeeper.io/) 
 
-A simple Node.js module to check if a TCP port is currently in use. It returns a promise.
+A Node.js module to check if a TCP port is currently in use. It returns a promise.
 Based on [tcp-port-used](https://www.npmjs.com/package/tcp-port-used)
 
 ## Installation
