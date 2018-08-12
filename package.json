@@ -1,7 +1,7 @@
 {
     "name": "port-used",
-    "version": "1.0.0",
-    "description": "A simple Node.js module to check if a TCP port is already bound.",
+    "version": "2.0.0",
+    "description": "A Node.js module to check if a TCP port is already bound.",
     "main": "index.js",
     "scripts": {
         "cover": "./node_modules/.bin/nyc --reporter=html --reporter=lcov npm test",
@@ -19,9 +19,9 @@
         "check",
         "networking"
     ],
-    "author": "Edmond Meinfelder",
+    "author": "Samuel Rouse",
     "contributors": [
-        "Samuel Rouse"
+        "Edmond Meinfelder"
     ],
     "license": "MIT",
     "bugs": {
