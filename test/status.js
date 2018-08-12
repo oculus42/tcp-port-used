@@ -61,13 +61,13 @@ describe('waitForStatus', () => {
   before(() => {
     setTimeout(() => {
       bindPort(44204);
-    }, 2000);
+    }, 1000);
   });
 
   it('should wait until the port is listening', function (done) {
     this.timeout(5000);
     tcpPortUsed.waitForStatus({
-      port: 44204, host: '127.0.0.1', inUse: true, retryTime: 500, timeout: 4000,
+      port: 44204, host: '127.0.0.1', inUse: true, retryTime: 500, timeout: 2000,
     })
       .then(() => {
         done();
@@ -82,7 +82,7 @@ describe('waitForStatus', () => {
       port: 'hello', host: '127.0.0.1', inUse: false, retryTime: 500, timeout: 2000,
     })
       .then(() => {
-        done(new Error('waitUntil used unexpectedly successful.'));
+        done(new Error('waitForStatus unexpectedly successful.'));
       }, (err) => {
         if (err.message === 'invalid port: \'hello\'') {
           done();
@@ -94,13 +94,45 @@ describe('waitForStatus', () => {
 
   it('should timeout when no port is listening', function (done) {
     this.timeout(3000);
-    tcpPortUsed.waitUntilUsed({
-      port: 44205, host: '127.0.0.1', inUse: true, retryTime: 500, timeout: 2000,
+    tcpPortUsed.waitForStatus({
+      port: 44205, host: '127.0.0.1', inUse: true, retryTime: 500, timeout: 1000,
     })
       .then(() => {
-        done(new Error('waitUntil used unexpectedly successful.'));
+        done(new Error('waitForStatus unexpectedly successful.'));
       }, (err) => {
         if (err.message === 'timeout') {
+          done();
+        } else {
+          done(err);
+        }
+      });
+  });
+
+  it('should timeout quickly', function (done) {
+    this.timeout(3000);
+    tcpPortUsed.waitForStatus({
+      port: 44205, host: '127.0.0.1', inUse: true, retryTime: 250, timeout: 1,
+    })
+      .then(() => {
+        done(new Error('waitForStatus unexpectedly successful.'));
+      }, (err) => {
+        if (err.message === 'timeout') {
+          done();
+        } else {
+          done(err);
+        }
+      });
+  });
+
+  it('should error with a bad host', function (done) {
+    this.timeout(3000);
+    tcpPortUsed.waitForStatus({
+      port: 44205, host: 'badhost', inUse: true, retryTime: 250, timeout: 1000,
+    })
+      .then(() => {
+        done(new Error('waitForStatus unexpectedly successful.'));
+      }, (err) => {
+        if (err.message !== 'timeout') {
           done();
         } else {
           done(err);

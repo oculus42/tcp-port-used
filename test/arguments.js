@@ -104,4 +104,20 @@ describe('check arguments', () => {
         done();
       });
   });
+
+  it('should error if inUse is not a Boolean', function (done) {
+    this.timeout(5000);
+    tcpPortUsed.waitForStatus({
+      port: 44204, inUse: 'bad',
+    })
+      .then(() => {
+        done(new Error(' inUse unexpectedly successful.'));
+      }, (err) => {
+        if (err.message === 'inUse must be a boolean') {
+          done();
+        } else {
+          done(err);
+        }
+      });
+  });
 });
