@@ -34,11 +34,11 @@ function getDeferred() {
  * @param {Number|Object} port a valid TCP port number
  * @param {String} host The DNS name or IP address.
  * @param {Boolean} inUse The desired in use status to wait for
- * @param {Number} retryTimeMs the retry interval in ms. Default is 250ms
- * @param {Number} timeOutMs the amount of time to wait until port is free. Default is 2000ms
+ * @param {Number} retryTime the retry interval in ms. Default is 250ms
+ * @param {Number} timeout the amount of time to wait until port is free. Default is 2000ms
  * @return {Object} An options object with all the above parameters as properties.
  */
-function makeOptionsObj(port, host, inUse, retryTimeMs, timeOutMs) {
+function makeOptionsObj(port, host, inUse, retryTime, timeout) {
   // the first argument may be an object, if it is not, make an object
   let opts;
   if (is.obj(port)) {
@@ -48,20 +48,20 @@ function makeOptionsObj(port, host, inUse, retryTimeMs, timeOutMs) {
       port,
       host,
       inUse,
-      retryTimeMs,
-      timeOutMs,
+      retryTime,
+      timeout,
     };
   }
 
-  if (!is.positiveInt(opts.retryTimeMs)) {
-    opts.retryTimeMs = RETRY_TIME;
+  if (!is.positiveInt(opts.retryTime)) {
+    opts.retryTime = RETRY_TIME;
   }
 
-  if (!is.positiveInt(opts.timeOutMs)) {
-    opts.timeOutMs = TIMEOUT;
+  if (!is.positiveInt(opts.timeout)) {
+    opts.timeout = TIMEOUT;
   }
 
-  if (opts.host === undefined) {
+  if (is.nullOrUndefined(opts.host)) {
     opts.host = LOCALHOST;
   }
 
@@ -139,14 +139,14 @@ function check(port, host) {
 /**
  * Creates a promise and fulfills it only when the socket's usage
  * equals status in terms of 'in use' (false === not in use, true === in use).
- * Will retry on an interval specified in retryTimeMs.  Note: you have to be
+ * Will retry on an interval specified in retryTime.  Note: you have to be
  * super user to correctly test system ports (0-1023).
  * @param {Object} options
  * @param {Number} options.port a valid TCP port if a number.
  * @param {Boolean} options.inUse The desired in use status to wait for
  * @param {String} [options.host] The hostname or IP address where the socket is.
- * @param {Number} [options.retryTimeMs] the retry interval in ms. Default is 250ms
- * @param {Number} [options.timeOutMs] time to wait until port is free. Default is 2000ms
+ * @param {Number} [options.retryTime] the retry interval in ms. Default is 250ms
+ * @param {Number} [options.timeout] time to wait until port is free. Default is 2000ms
  * @return {Promise} A promise.
  *
  * Example usage:
@@ -156,8 +156,8 @@ function check(port, host) {
  *   port: 44204,
  *   host: 'some.host.com',
  *   inUse: true,
- *   retryTimeMs: 500,
- *   timeOutMs: 4000
+ *   retryTime: 500,
+ *   timeout: 4000
  * }).then(() => {
  *   console.log('Port 44204 is now in use.');
  * }, (err) => {
@@ -192,7 +192,7 @@ function waitForStatus(options) {
     deferred.reject(new Error('timeout'));
   }
 
-  timeoutId = setTimeout(timeoutFunc, opts.timeOutMs);
+  timeoutId = setTimeout(timeoutFunc, opts.timeout);
 
   function doCheck() {
     check(opts.port, opts.host)
@@ -206,7 +206,7 @@ function waitForStatus(options) {
         } else {
           retryId = setTimeout(() => {
             doCheck();
-          }, opts.retryTimeMs);
+          }, opts.retryTime);
         }
       }, (err) => {
         if (timedOut) {
@@ -223,12 +223,12 @@ function waitForStatus(options) {
 
 /**
  * Creates a promise and fulfills it only when the socket is free.
- * Will retry on an interval specified in retryTimeMs.
+ * Will retry on an interval specified in retryTime.
  * Note: you have to be super user to correctly test system ports (0-1023).
  * @param {Number} options.port a valid TCP port number
  * @param {String} [options.host] The hostname or IP address where the socket is.
- * @param {Number} [options.retryTimeMs] the retry interval in ms. Default is 250ms.
- * @param {Number} [options.timeOutMs] the time to wait until port is free. Default is 2000ms.
+ * @param {Number} [options.retryTime] the retry interval in ms. Default is 250ms.
+ * @param {Number} [options.timeout] the time to wait until port is free. Default is 2000ms.
 * @return {Promise} A promise.
  *
  * Example usage:
@@ -237,8 +237,8 @@ function waitForStatus(options) {
  * portUsed.waitUntilFree({
  *   port: 44203,
  *   host: 'some.host.com'
- *   retryTimeMs: 500,
- *   timeOutMs: 4000
+ *   retryTime: 500,
+ *   timeout: 4000
  * }).then(() => {
  *   console.log('Port 44203 is now free.');
  * }, (err) => {
@@ -256,13 +256,13 @@ function waitUntilFree(options) {
 
 /**
  * Creates a promise and fulfills it only when the socket is used.
- * Will retry on an interval specified in retryTimeMs.
+ * Will retry on an interval specified in retryTime.
  * Note: you have to be super user to correctly test system ports (0-1023).
  * @param {Object} options
  * @param {Number} options.port a valid TCP port number.
  * @param {string} [options.host] the hostname or IP address. Default is LOCALHOST
- * @param {Number} [options.retryTimeMs] the retry interval in ms. Default is 500ms
- * @param {Number} [options.timeOutMs] the time to wait until port is free. Default is 2000ms
+ * @param {Number} [options.retryTime] the retry interval in ms. Default is 500ms
+ * @param {Number} [options.timeout] the time to wait until port is free. Default is 2000ms
 * @return {Promise} A promise.
  *
  * Example usage:
@@ -271,8 +271,8 @@ function waitUntilFree(options) {
  * portUsed.waitUntilUsed({
  *   port: 44204,
  *   host: 'some.host.com',
- *   retryTimeMs: 500,
- *   timeOutMs: 4000
+ *   retryTime: 500,
+ *   timeout: 4000
  * }).then(() => {
  *   console.log('Port 44204 is now in use.');
  * }, (err) => {

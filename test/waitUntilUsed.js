@@ -67,7 +67,7 @@ describe('waitUntilUsed', () => {
   it('should wait until the port is listening', function (done) {
     this.timeout(5000);
     tcpPortUsed.waitUntilUsed({
-      port: 44204, host: '127.0.0.1', retryTimeMs: 500, timeOutMs: 4000,
+      port: 44204, host: '127.0.0.1', retryTime: 500, timeout: 4000,
     })
       .then(() => {
         done();
@@ -79,7 +79,7 @@ describe('waitUntilUsed', () => {
   it('should reject promise when given an invalid port', function (done) {
     this.timeout(3000);
     tcpPortUsed.waitUntilUsed({
-      port: 'hello', host: '127.0.0.1', retryTimeMs: 500, timeOutMs: 2000,
+      port: 'hello', host: '127.0.0.1', retryTime: 500, timeout: 2000,
     })
       .then(() => {
         done(new Error('waitUntil used unexpectedly successful.'));
@@ -95,7 +95,7 @@ describe('waitUntilUsed', () => {
   it('should timeout when no port is listening', function (done) {
     this.timeout(3000);
     tcpPortUsed.waitUntilUsed({
-      port: 44205, host: '127.0.0.1', retryTimeMs: 500, tmieOutMs: 2000,
+      port: 44205, host: '127.0.0.1', retryTime: 500, tmieOutMs: 2000,
     })
       .then(() => {
         done(new Error('waitUntil used unexpectedly successful.'));
@@ -124,7 +124,7 @@ describe('waitUntilUsed', () => {
 
   it('should wait until the port is listening', function (done) {
     this.timeout(5000);
-    tcpPortUsed.waitUntilUsed({ port: 44204, retryTimeMs: 500, timeOutMs: 4000 })
+    tcpPortUsed.waitUntilUsed({ port: 44204, retryTime: 500, timeout: 4000 })
       .then(() => {
         done();
       }, (err) => {
@@ -134,7 +134,7 @@ describe('waitUntilUsed', () => {
 
   it('should reject promise when given an invalid port', function (done) {
     this.timeout(3000);
-    tcpPortUsed.waitUntilUsed({ port: 'hello', retryTimeMs: 500, timeOutMs: 2000 })
+    tcpPortUsed.waitUntilUsed({ port: 'hello', retryTime: 500, timeout: 2000 })
       .then(() => {
         done(new Error('waitUntil used unexpectedly successful.'));
       }, (err) => {
@@ -148,7 +148,7 @@ describe('waitUntilUsed', () => {
 
   it('should timeout when no port is listening', function (done) {
     this.timeout(3000);
-    tcpPortUsed.waitUntilUsed({ port: 44205, retryTimeMs: 500, timeOutMs: 2000 })
+    tcpPortUsed.waitUntilUsed({ port: 44205, retryTime: 500, timeout: 2000 })
       .then(() => {
         done(new Error('waitUntil used unexpectedly successful.'));
       }, (err) => {
