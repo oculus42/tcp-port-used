@@ -14,21 +14,6 @@ const TIMEOUT = 2000;
 const RETRY_TIME = 250;
 const LOCALHOST = '127.0.0.1';
 
-function getDeferred() {
-  let resolve;
-  let reject;
-  const promise = new Promise((res, rej) => {
-    resolve = res;
-    reject = rej;
-  });
-
-  return {
-    resolve,
-    reject,
-    promise,
-  };
-}
-
 /**
  * Creates an options object from all the possible arguments
  * @param {Number|Object} port a valid TCP port number
@@ -98,7 +83,6 @@ function cleanUpClient(client) {
  * });
  */
 function check(port, host) {
-  const deferred = getDeferred();
   const opts = Object.assign({
     host: LOCALHOST,
   }, makeOptionsObj(port, host));
@@ -107,26 +91,26 @@ function check(port, host) {
     return Promise.reject(new Error(`invalid port: ${util.inspect(opts.port)}`));
   }
 
-  const client = new net.Socket();
-  client.once('connect', () => {
-    deferred.resolve(true);
-    cleanUpClient(client);
-  });
-  client.once('error', (err) => {
-    if (err.code === 'ECONNREFUSED') {
-      deferred.resolve(false);
-    } else {
-      deferred.reject(err);
-    }
-    cleanUpClient(client);
-  });
+  return new Promise((resolve, reject) => {
+    const client = new net.Socket();
+    client.once('connect', () => {
+      resolve(true);
+      cleanUpClient(client);
+    });
+    client.once('error', (err) => {
+      if (err.code === 'ECONNREFUSED') {
+        resolve(false);
+      } else {
+        reject(err);
+      }
+      cleanUpClient(client);
+    });
 
-  client.connect({
-    port: opts.port,
-    host: opts.host,
+    client.connect({
+      port: opts.port,
+      host: opts.host,
+    });
   });
-
-  return deferred.promise;
 }
 
 /**
@@ -160,58 +144,28 @@ function check(port, host) {
 
 function waitForStatus(options) {
   const opts = makeOptionsObj(options);
-  const deferred = getDeferred();
-  let timeoutId;
-  let timedOut = false;
-  let retryId;
 
   if (!is.bool(opts.inUse)) {
-    deferred.reject(new Error('inUse must be a boolean'));
-    return deferred.promise;
+    return Promise.reject(new Error('inUse must be a boolean'));
   }
 
-  function cleanUp() {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    if (retryId) {
-      clearTimeout(retryId);
-    }
-  }
+  const endTime = Date.now() + opts.timeout;
 
-  function timeoutFunc() {
-    timedOut = true;
-    cleanUp();
-    deferred.reject(new Error('timeout'));
-  }
+  const pollCheck = (resolve, reject) => {
+    check(opts.port, opts.host).then((used) => {
+      if (used === opts.inUse) {
+        resolve();
+      } else if (Date.now() < endTime) {
+        setTimeout(pollCheck, opts.retryTime, resolve, reject);
+      } else {
+        reject(new Error('timeout'));
+      }
+    }, (err) => {
+      reject(err);
+    });
+  };
 
-  timeoutId = setTimeout(timeoutFunc, opts.timeout);
-
-  function doCheck() {
-    check(opts.port, opts.host)
-      .then((used) => {
-        if (timedOut) {
-          return;
-        }
-        if (used === opts.inUse) {
-          deferred.resolve();
-          cleanUp();
-        } else {
-          retryId = setTimeout(() => {
-            doCheck();
-          }, opts.retryTime);
-        }
-      }, (err) => {
-        if (timedOut) {
-          return;
-        }
-        deferred.reject(err);
-        cleanUp();
-      });
-  }
-
-  doCheck();
-  return deferred.promise;
+  return new Promise(pollCheck);
 }
 
 /**
