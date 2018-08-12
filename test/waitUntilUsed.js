@@ -61,13 +61,13 @@ describe('waitUntilUsed', () => {
   before(() => {
     setTimeout(() => {
       bindPort(44204);
-    }, 1000);
+    }, 500);
   });
 
   it('should wait until the port is listening', function (done) {
     this.timeout(5000);
     tcpPortUsed.waitUntilUsed({
-      port: 44204, host: '127.0.0.1', retryTime: 500, timeout: 4000,
+      port: 44204, host: '127.0.0.1', retryTime: 250, timeout: 1000,
     })
       .then(() => {
         done();
@@ -79,7 +79,7 @@ describe('waitUntilUsed', () => {
   it('should reject promise when given an invalid port', function (done) {
     this.timeout(3000);
     tcpPortUsed.waitUntilUsed({
-      port: 'hello', host: '127.0.0.1', retryTime: 500, timeout: 2000,
+      port: 'hello', host: '127.0.0.1', retryTime: 250, timeout: 500,
     })
       .then(() => {
         done(new Error('waitUntil used unexpectedly successful.'));
@@ -95,7 +95,7 @@ describe('waitUntilUsed', () => {
   it('should timeout when no port is listening', function (done) {
     this.timeout(3000);
     tcpPortUsed.waitUntilUsed({
-      port: 44205, host: '127.0.0.1', retryTime: 500, timeout: 1000,
+      port: 44205, host: '127.0.0.1', retryTime: 250, timeout: 500,
     })
       .then(() => {
         done(new Error('waitUntil used unexpectedly successful.'));

@@ -65,17 +65,6 @@ describe('check functionality for unused port', () => {
     });
   });
 
-  it('should return true for a used port with default host value in an obj', (done) => {
-    tcpPortUsed.check({ port: 44202 })
-      .then((inUse) => {
-        assert.ok(inUse === true);
-        done();
-      }, (err) => {
-        done(err);
-      });
-  });
-
-
   it('should return true for a used port with default host value', (done) => {
     tcpPortUsed.check(44202)
       .then((inUse) => {
@@ -86,7 +75,7 @@ describe('check functionality for unused port', () => {
       });
   });
 
-  it('should return true for a used port with default host value using arg obj', (done) => {
+  it('should return true for a used port with default host value using arg object', (done) => {
     tcpPortUsed.check({ port: 44202 })
       .then((inUse) => {
         assert.ok(inUse === true);
@@ -96,7 +85,7 @@ describe('check functionality for unused port', () => {
       });
   });
 
-  it('should return true for a used port with given host value using arg obj', (done) => {
+  it('should return true for a used port with given host value using arg object', (done) => {
     tcpPortUsed.check({ port: 44202, host: '127.0.0.1' })
       .then((inUse) => {
         assert.ok(inUse === true);

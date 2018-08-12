@@ -68,7 +68,7 @@ describe('waitUntilFree', function () {
 
   it('should reject promise for used port number after timeout', (done) => {
     tcpPortUsed.waitUntilFree({
-      port: 44203, host: '127.0.0.1', retryTime: 500, timeout: 1000,
+      port: 44203, host: '127.0.0.1', retryTime: 250, timeout: 500,
     })
       .then(() => {
         done(new Error('waitUntilFree unexpectedly succeeded'));
@@ -83,7 +83,7 @@ describe('waitUntilFree', function () {
 
   it('should fulfill promise for free port number', (done) => {
     tcpPortUsed.waitUntilFree({
-      port: 44205, host: '127.0.0.1', retryTime: 500, timeOutM: 4000,
+      port: 44205, host: '127.0.0.1', retryTime: 250, timeout: 1000,
     })
       .then(() => {
         done();
