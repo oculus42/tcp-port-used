@@ -25,12 +25,7 @@ function makeOptionsObj(options, ...args) {
   let opts = options;
   if (!is.obj(options)) {
     const port = options;
-    const [
-      host,
-      inUse,
-      retryTime,
-      timeout,
-    ] = args;
+    const [host, inUse, retryTime, timeout] = args;
 
     opts = {
       port,
