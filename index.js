@@ -109,6 +109,20 @@ function check(port, host) {
   });
 }
 
+const pollCheck = (resolve, reject, endTime, opts) => {
+  check(opts.port, opts.host).then((used) => {
+    if (used === opts.inUse) {
+      resolve();
+    } else if (Date.now() < endTime) {
+      setTimeout(pollCheck, opts.retryTime, resolve, reject, endTime, opts);
+    } else {
+      reject(new Error('timeout'));
+    }
+  }, (err) => {
+    reject(err);
+  });
+};
+
 /**
  * Creates a promise and fulfills it only when the socket's usage
  * equals status in terms of 'in use' (false === not in use, true === in use).
@@ -147,21 +161,7 @@ function waitForStatus(options) {
 
   const endTime = Date.now() + opts.timeout;
 
-  const pollCheck = (resolve, reject) => {
-    check(opts.port, opts.host).then((used) => {
-      if (used === opts.inUse) {
-        resolve();
-      } else if (Date.now() < endTime) {
-        setTimeout(pollCheck, opts.retryTime, resolve, reject);
-      } else {
-        reject(new Error('timeout'));
-      }
-    }, (err) => {
-      reject(err);
-    });
-  };
-
-  return new Promise(pollCheck);
+  return new Promise((resolve, reject) => pollCheck(resolve, reject, endTime, opts));
 }
 
 /**
