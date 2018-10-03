@@ -116,7 +116,7 @@ function check(port, host) {
   });
 }
 
-const pollCheck = (resolve, reject, endTime, opts) => {
+function pollCheck(resolve, reject, endTime, opts) {
   check(opts.port, opts.host).then((used) => {
     if (used === opts.inUse) {
       resolve();
@@ -128,7 +128,7 @@ const pollCheck = (resolve, reject, endTime, opts) => {
   }, (err) => {
     reject(err);
   });
-};
+}
 
 /**
  * Creates a promise and fulfills it only when the socket's usage
