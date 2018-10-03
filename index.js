@@ -12,19 +12,26 @@ const LOCALHOST = '127.0.0.1';
 
 /**
  * Creates an options object from all the possible arguments
- * @param {Number|Object} port a valid TCP port number
- * @param {String} [host] The DNS name or IP address.
- * @param {Boolean} [inUse] The desired in use status to wait for
- * @param {Number} [retryTime] the retry interval in ms. Default is 250ms
- * @param {Number} [timeout] the amount of time to wait until port is free. Default is 2000ms
+ * @param {Number|Object} options Options, or a valid TCP port number
+ * @param {...*} [args] Remaining values.
+ * - {String} [host] The DNS name or IP address.
+ * - {Boolean} [inUse] The desired in use status to wait for
+ * - {Number} [retryTime] the retry interval in ms. Default is 250ms
+ * - {Number} [timeout] the amount of time to wait until port is free. Default is 2000ms
  * @return {Object} An options object with all the above parameters as properties.
  */
-function makeOptionsObj(port, host, inUse, retryTime, timeout) {
+function makeOptionsObj(options, ...args) {
   // the first argument may be an object, if it is not, make an object
-  let opts;
-  if (is.obj(port)) {
-    opts = port;
-  } else {
+  let opts = options;
+  if (!is.obj(options)) {
+    const port = options;
+    const [
+      host,
+      inUse,
+      retryTime,
+      timeout,
+    ] = args;
+
     opts = {
       port,
       host,
